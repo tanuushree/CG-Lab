@@ -1,0 +1,57 @@
+
+from OpenGL import*
+from OpenGL.GL import*
+from OpenGL.GLU import*
+from OpenGL.GLUT import*
+
+def showscreen():
+	glClearColor(0.7, 0, 0, 1)
+	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+	glColor3f(1.0,1.0,1.0)
+	glPointSize(5.0)	
+	glBegin(GL_POLYGON)
+	glVertex2f(0.0,0.0)
+	glVertex2f(0.0,0.6)
+	glVertex2f(0.3,0.9)
+	glVertex2f(0.6,0.6)
+	glVertex2f(0.6,0.0)
+	glEnd()
+	glColor3f(0.0,0.0,0.0)
+	glPointSize(5.0)
+	glBegin(GL_POLYGON)
+	glVertex2f(0.0,0.0)
+	glVertex2f(0.0,-0.6)
+	glVertex2f(0.3,-0.9)
+	glVertex2f(0.6,-0.6)
+	glVertex2f(0.6,0.0)
+	glEnd()
+	glColor3f(1.0,1.0,1.0)
+	glPointSize(5.0)
+	glBegin(GL_POLYGON)
+	glVertex2f(0.0,0.0)
+	glVertex2f(0.0,-0.6)
+	glVertex2f(-0.3,-0.9)
+	glVertex2f(-0.6,-0.6)
+	glVertex2f(-0.6,0.0)
+	glEnd()
+	glColor3f(0.0,0.0,0.0)
+	glPointSize(5.0)	
+	glBegin(GL_POLYGON)
+	glVertex2f(0.0,0.0)
+	glVertex2f(0.0,0.6)
+	glVertex2f(-0.3,0.9)
+	glVertex2f(-0.6,0.6)
+	glVertex2f(-0.6,0.0)
+	glEnd()
+	glFlush()
+	
+glutInit()
+glutInitDisplayMode(GLUT_RGBA)
+glutInitWindowSize(500,500)
+glutInitWindowPosition(0,0)
+glutCreateWindow("New Window")
+glutDisplayFunc(showscreen)
+glutIdleFunc(showscreen)
+glutMainLoop()
+
+
