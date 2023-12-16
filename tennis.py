@@ -1,107 +1,113 @@
-from OpenGL import *
-from OpenGL.GLU import *
-from OpenGL.GLUT import *
 from OpenGL.GL import *
+from OpenGL.GLUT import *
+from OpenGL.GLU import *
 import math
 
-#draw circle
-def plot_points(xc,yc,x,y):
-	glVertex2f(x+xc,y+yc)
-	glVertex2f(y+xc,x+yc)
-	glVertex2f(-x+xc,y+yc)
-	glVertex2f(-y+xc,x+yc)
-	glVertex2f(-x+xc,-y+yc)
-	glVertex2f(-y+xc,-x+yc)
-	glVertex2f(x+xc,-y+yc)
-	glVertex2f(y+xc,-x+yc)
-	
-def draw_circle(r,xc,yc):
-	x = 0
-	y = r
-	p=1-r
-	glBegin(GL_POINTS)
-	while x <= y:
-		if p<0:
-			p=p+2*x+1
-		else:
-			y-=1
-			p=p-2*y+2*x+1
-			
-		plot_points(xc,yc,x,y)
-		x+=1
-	glEnd()
-	glFlush()
+# Initial positions of the players and the ball
+player1_x, player1_y = -0.8, 0.0
+player2_x, player2_y = 0.8, 0.0
+ball_x, ball_y = 0.0, 0.0
+ball_speed = 0.01
+ball_direction = 1  # To change ball's direction
 
-def draw_line(x1,y1,x2,y2):
-	dx = x2-x1
-	dy = y2-y1
-	steps = max(abs(dx),abs(dy))
-	x_inc = dx/steps
-	y_inc = dy/steps
-	x,y=x1,y1
-	glBegin(GL_POINTS)
-	for i in range(steps+1):
-		glVertex2f(x,y)
-		x+=x_inc
-		y+=y_inc
-	glEnd()
-	glFlush()
+# Function to draw a circle
+def draw_circle(radius, x, y):
+    num_segments = 100
+    glBegin(GL_TRIANGLE_FAN)
+    glVertex2f(x, y)
+    for i in range(num_segments):
+        angle = 2.0 * math.pi * i / num_segments
+        glVertex2f(x + radius * math.cos(angle), y + radius * math.sin(angle))
+    glEnd()
 
+# Function to draw the stick figure player with a tennis racquet
+def draw_player(x, y):
+    glLineWidth(2.0)
+    glColor3f(1.0, 1.0, 1.0)  # White color for stick figure
+    draw_circle(0.05, x, y + 0.05)  # Head
+    glBegin(GL_LINES)
+    # Body
+    glVertex2f(x, y)
+    glVertex2f(x, y - 0.2)
+    # Arms
+    glVertex2f(x, y - 0.1)
+    glVertex2f(x - 0.1, y - 0.15)  # Left arm
+    glVertex2f(x, y - 0.1)
+    glVertex2f(x + 0.1, y - 0.15)  # Right arm
+    # Legs
+    glVertex2f(x, y - 0.2)
+    glVertex2f(x - 0.1, y - 0.3)  # Left leg
+    glVertex2f(x, y - 0.2)
+    glVertex2f(x + 0.1, y - 0.3)  # Right leg
+    glEnd()
+    # Racquet (Simple line and circle)
+    if x > 0:  # If player is on the right side (player2)
+        glBegin(GL_LINES)
+        glVertex2f(x - 0.1, y - 0.15)
+        glVertex2f(x - 0.2, y - 0.05)  # Racquet handle (line)
+        glEnd()
+        draw_circle(0.03, x - 0.2, y - 0.05)  # Racquet head (circle)
+    else:  # If player is on the left side (player1)
+        glBegin(GL_LINES)
+        glVertex2f(x + 0.1, y - 0.15)
+        glVertex2f(x + 0.2, y - 0.05)  # Racquet handle (line)
+        glEnd()
+        draw_circle(0.03, x + 0.2, y - 0.05)  # Racquet head (circle)
 
-def init():
-	glClearColor(0.0,0.0,0.0,0.0)
-	gluOrtho2D(0.0,500.0,0.0,500.0)
+# Function to draw the tennis ball
+def draw_ball(x, y):
+    glColor3f(1.0, 0.0, 0.0)  # Red color for the ball
+    draw_circle(0.02, x, y)  # Small red circle for the ball
 
-def showscreen():
-	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
-	glColor3f(1.0,1.0,1.0)
-	r1 = 20
-	xc1,yc1 = 50,150
-	r2 = 15
-	xc2,yc2 = 105,142
-	draw_circle(r1,xc1,yc1)
-	draw_circle(r2,xc2,yc2)
-	x1,y1 = 50,130
-	x2,y2 = 50,30
-	x3,y3 = 25,80
-	x4,y4 = 75,80
-	x5,y5 = 100,130
-	draw_line(x1,y1,x2,y2)
-	draw_line(x1,y1,x3,y3)
-	draw_line(x1,y1,x4,y4)
-	draw_line(x4,y4,x5,y5)
-	
-	r3 = 20
-	xc3,yc3 = 450,150
-	r4 = 15
-	xc4,yc4 = 395,142
-	draw_circle(r3,xc3,yc3)
-	draw_circle(r4,xc4,yc4)
-	x1,y1 = 450,130
-	x2,y2 = 450,30
-	x3,y3 = 425,80
-	x4,y4 = 475,80
-	x5,y5 = 400,130
-	draw_line(x1,y1,x2,y2)
-	draw_line(x1,y1,x3,y3)
-	draw_line(x1,y1,x4,y4)
-	draw_line(x3,y3,x5,y5)
-	
-	r5 = 10
-	xc5,yc5 = 200,200
-	draw_circle(r5,xc5,yc5)
-	
+# Function to update the animation
+def update(value):
+    global player1_x, player2_x, ball_x, ball_speed, ball_direction
+
+    # Move players
+    player1_x += 0.005
+    player2_x -= 0.005
+
+    # Move ball and handle ball collision with players
+    ball_x += ball_speed * ball_direction
+    if (player1_x - 0.15 <= ball_x <= player1_x + 0.15 and
+        player1_y - 0.2 <= ball_y <= player1_y):
+        ball_direction = 1  # Change ball's direction
+    elif (player2_x - 0.15 <= ball_x <= player2_x + 0.15 and
+          player2_y - 0.2 <= ball_y <= player2_y):
+        ball_direction = -1  # Change ball's direction
+
+    # If the ball reaches the edges, reset its position
+    if ball_x >= 0.9 or ball_x <= -0.9:
+        ball_x, ball_y = 0.0, 0.0
+
+    glutPostRedisplay()
+    glutTimerFunc(10, update, 0)
+
+# Function to display the scene
+def display():
+    glClear(GL_COLOR_BUFFER_BIT)
+    glLoadIdentity()
+
+    draw_player(player1_x, player1_y)
+    draw_player(player2_x, player2_y)
+    draw_ball(ball_x, ball_y)
+
+    glutSwapBuffers()
+
 def main():
-	glutInit(sys.argv)
-	glutInitDisplayMode(GLUT_RGBA)
-	glutInitWindowSize(500,500)
-	glutInitWindowPosition(100,100)
-	glutCreateWindow("Two people playing tennis")
-	init()
-	glutDisplayFunc(showscreen)
-	glutIdleFunc(showscreen)
-	glutMainLoop()
+    glutInit(sys.argv)
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB)
+    glutInitWindowSize(800, 600)
+    glutCreateWindow(b"Tennis Animation")
+
+    glutDisplayFunc(display)
+    glutTimerFunc(25, update, 0)
+
+    glMatrixMode(GL_PROJECTION)
+    glLoadIdentity()
+    gluOrtho2D(-1.5, 1.5, -1.5, 1.5)
+
+    glutMainLoop()
 
 if __name__ == "__main__":
-	main()
-
+    main()
